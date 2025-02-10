@@ -1,0 +1,12 @@
+node_modules
+config/config.env
+.vscode
+**.DS_Store
+**.zip
+dump
+logs/access.log
+developers-guide.txt
+public/uploads
+public/uploads-old
+public/uploads-1
+trade-steps.txt
