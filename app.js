@@ -29,26 +29,26 @@ app.use((req, res, next) => {
     next();
 })
 
-// app.use(
-//     session({
-//         saveUninitialized: false,
-//         resave: false,
-//         key: process.env.KEY,
-//         secret: process.env.SECRET,
-//         secure: true,
-//         httpOnly: true,
-//         store: MongoStore.create({
-//             mongoUrl: process.env.MONGO_URI,
-//             ttl: 7 * 24 * 60 * 60,
-//             autoRemove: "native",
-//             collectionName: "sessions",
-//             touchAfter: 12 * 3600,
-//         }),
-//         cookie: {
-//             maxAge: 50 * 365 * 24 * 60 * 60 * 1000,
-//         },
-//     })
-// );
+app.use(
+    session({
+        saveUninitialized: false,
+        resave: false,
+        key: process.env.KEY,
+        secret: process.env.SECRET,
+        secure: true,
+        httpOnly: true,
+        store: MongoStore.create({
+            mongoUrl: process.env.MONGO_URI,
+            ttl: 7 * 24 * 60 * 60,
+            autoRemove: "native",
+            collectionName: "sessions",
+            touchAfter: 12 * 3600,
+        }),
+        cookie: {
+            maxAge: 50 * 365 * 24 * 60 * 60 * 1000,
+        },
+    })
+);
 
 // import authRoutes from "./routes/admin/authRoute.js"
 // import adminPrimaryRoutes from "./routes/admin/primaryRoute.js"
