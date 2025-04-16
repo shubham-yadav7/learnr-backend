@@ -2,11 +2,13 @@ import express from "express";
 import dotenv from "dotenv";
 import path from "path";
 import flash from "connect-flash";
+import session from "express-session";
+import MongoStore from "connect-mongo";
 import { fileURLToPath } from "url";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import methodOverride from "method-override";
-import ErrorMiddleware from "./middlewares/Error.js";
+import ErrorMiddleware from "./middlewares/error.js";
 
 
 dotenv.config({ path: "./config/config.env" })
@@ -22,12 +24,7 @@ app.use(flash());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(__dirname + "/public"))
-
-app.use((req, res, next) => {
-    res.locals.error = req.flash("error");
-    res.locals.success = req.flash("success");
-    next();
-})
+app.set("views", path.resolve("./views"));
 
 app.use(
     session({
@@ -50,6 +47,20 @@ app.use(
     })
 );
 
+app.use((req, res, next) => {
+    res.locals.error = req.flash("error");
+    res.locals.success = req.flash("success");
+    next();
+})
+
+import primaryRoutes from "./routes/primaryRoute.js"
+
+import instructorAuthRoutes from "./routes/api/instructor/authRoute.js"
+import instructorPrimaryRoutes from "./routes/api/instructor/primaryRoute.js"
+
+import adminAuthRoutes from "./routes/api/admin/authRoute.js"
+import adminPrimaryRoutes from "./routes/api/admin/primaryRoute.js"
+
 // import authRoutes from "./routes/admin/authRoute.js"
 // import adminPrimaryRoutes from "./routes/admin/primaryRoute.js"
 // import adminProductRoutes from "./routes/admin/productRoute.js"
@@ -71,7 +82,27 @@ app.use(
 // app.use("/admin/transaction", adminTransactionRoutes);
 // app.use("/admin/support", adminSupportRoutes);
 
-// app.use("/api/auth", userAuthRoutes);
+app.use("/", primaryRoutes);
+
+app.use("/admin", adminPrimaryRoutes);
+app.use("/admin/auth", adminAuthRoutes);
+
+app.use("/instructor", instructorPrimaryRoutes);
+app.use("/instructor/auth", instructorAuthRoutes);
+
+
+app.get("*", (req, res) => {
+    const responseType = req.accepts(["html", "json"]);
+
+    if (responseType === "html") {
+        res.render(__dirname + "/views/instructor/auth/page-not-found");
+    } else if (responseType === "json") {
+        res.status(500).json({
+            success: false,
+            message: "The resource you are trying to get is not available.",
+        });
+    }
+});
 
 
 export default app;
